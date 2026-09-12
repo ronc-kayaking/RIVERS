@@ -1,6 +1,5 @@
 param(
   [string]$SourceDir = "data\rainchasers-source\rivers",
-  [string]$OutputPath = "data\rainchasers-sections.json",
   [string]$ScriptOutputPath = "data\rainchasers-sections.js"
 )
 
@@ -10,6 +9,9 @@ function Convert-YamlScalar {
   $text = ""
   if ($null -ne $Value) {
     $text = $Value.Trim()
+  }
+  if ($text -in @("null", "~")) {
+    return $null
   }
   if ($text.Length -ge 2 -and $text.StartsWith("'") -and $text.EndsWith("'")) {
     return $text.Substring(1, $text.Length - 2).Replace("''", "'")
@@ -33,7 +35,7 @@ function Read-RainchasersYaml {
   $context = ""
   $currentMeasure = $null
 
-  foreach ($line in Get-Content -LiteralPath $Path) {
+  foreach ($line in Get-Content -LiteralPath $Path -Encoding UTF8) {
     if ([string]::IsNullOrWhiteSpace($line)) { continue }
 
     if ($line -match '^([A-Za-z_]+):\s*(.*)$') {
@@ -93,7 +95,11 @@ function New-Point {
   }
 }
 
-$sourcePath = Resolve-Path -LiteralPath $SourceDir
+$sourcePath = Resolve-Path -LiteralPath $SourceDir -ErrorAction SilentlyContinue
+if (-not $sourcePath) {
+  throw "Rainchasers source was not found at '$SourceDir'. Run scripts\Initialize-ProjectData.ps1 first."
+}
+
 $sections = foreach ($file in Get-ChildItem -LiteralPath $sourcePath -Filter *.yaml | Sort-Object Name) {
   $raw = Read-RainchasersYaml $file.FullName
   if (-not $raw.river) { continue }
@@ -128,9 +134,13 @@ $sections = foreach ($file in Get-ChildItem -LiteralPath $sourcePath -Filter *.y
   }
 }
 
-New-Item -ItemType Directory -Force -Path (Split-Path $OutputPath -Parent) | Out-Null
+if (-not $sections.Count) {
+  throw "No Rainchasers sections were generated from '$SourceDir'."
+}
+
+New-Item -ItemType Directory -Force -Path (Split-Path $ScriptOutputPath -Parent) | Out-Null
 $json = $sections | ConvertTo-Json -Depth 12
-$json | Set-Content -LiteralPath $OutputPath -Encoding UTF8
+$json = $json.Replace("&", "\u0026").Replace("<", "\u003c").Replace(">", "\u003e")
+$json = $json.Replace([string][char]0x2028, "\u2028").Replace([string][char]0x2029, "\u2029")
 "window.RAINCHASERS_SECTIONS = $json;" | Set-Content -LiteralPath $ScriptOutputPath -Encoding UTF8
-Write-Host "Wrote $($sections.Count) Rainchasers sections to $OutputPath"
 Write-Host "Wrote browser data script to $ScriptOutputPath"

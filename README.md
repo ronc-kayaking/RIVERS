@@ -28,7 +28,6 @@ The tile layer list lives in `config.js`. If one provider is patchy on your netw
 ## River Data
 
 - River gauges and latest water levels: Environment Agency real-time flood monitoring API.
-- England river gauges and latest water levels: Environment Agency real-time flood monitoring API.
 - Welsh river gauges in the White water tab: local snapshot from Natural Resources Wales' public river-level site station feed.
 - The river menu is built from active EA level stations that have a `riverName`.
 - The menu is split into White water and Flat water tabs. White water contains every Rainchasers paddle section from the local data copy, including sections outside England. Flat water contains the remaining Environment Agency rivers.
@@ -37,11 +36,16 @@ The tile layer list lives in `config.js`. If one provider is patchy on your netw
 
 ## Local Rainchasers Copy
 
-- Source clone: `data/rainchasers-source`
+- Source submodule: `data/rainchasers-source`
 - Generated browser data: `data/rainchasers-sections.js`
-- Generated JSON: `data/rainchasers-sections.json`
 
-To rebuild the local Rainchasers data after updating the clone:
+After a fresh clone, initialise the pinned Rainchasers source and rebuild the browser data:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\Initialize-ProjectData.ps1
+```
+
+To rebuild after updating the submodule:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\Build-RainchasersData.ps1
@@ -52,6 +56,20 @@ To refresh the local NRW gauge snapshot:
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\Refresh-NrwData.ps1
 ```
+
+Pass `-RefreshNrw` to `Initialize-ProjectData.ps1` to perform both operations. Generated browser assets are committed so the website can run without PowerShell or Git submodule support.
+
+The interface reports whether Environment Agency data is live, cached, stale, unavailable, or failed to refresh. It also shows the age of the bundled NRW snapshot.
+
+## Tests
+
+The automated suite runs in headless Microsoft Edge without installing packages:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\Run-Tests.ps1
+```
+
+It covers generated-data consistency, EA/NRW normalisation, coordinate conversion, gauge matching, pagination and API errors, cache expiry, URL hashes, and external URL validation.
 
 ## Notes
 

@@ -386,7 +386,7 @@
         "sectionName":  "Gwaun-Cae-Gurwen To Aman Confluence",
         "km":  4,
         "grade":  "5",
-        "notes":  "Reputedly has a series of large grade 5 falls, but little information is available. The stream itself runs through Gwaun-Cae-Gurwen to join the Aman, and doesn\u0027t itself have a name. null",
+        "notes":  "Reputedly has a series of large grade 5 falls, but little information is available. The stream itself runs through Gwaun-Cae-Gurwen to join the Aman, and doesn\u0027t itself have a name.",
         "measures":  [
 
                      ],
@@ -658,7 +658,7 @@
         "sectionName":  "Top of Snake Pass to Alport Confluence",
         "km":  5,
         "grade":  "3",
-        "notes":  "Steep continuous with tiny eddies and plenty of trees and fences. The rapids are not super hard but it\u0027s easy to mess it up or underestimate this run, especially when high. null",
+        "notes":  "Steep continuous with tiny eddies and plenty of trees and fences. The rapids are not super hard but it\u0027s easy to mess it up or underestimate this run, especially when high.",
         "measures":  [
 
                      ],
@@ -723,7 +723,7 @@
         "sectionName":  "Semer Water to Ure Confluence",
         "km":  4,
         "grade":  "2/3",
-        "notes":  "Supposedly England\u0027s shortest river! The main rapids of interest are the falls in Bainbridge. null",
+        "notes":  "Supposedly England\u0027s shortest river! The main rapids of interest are the falls in Bainbridge.",
         "measures":  [
 
                      ],
@@ -1150,7 +1150,7 @@
         "sectionName":  "Barkisland Paper Mills to Calder Confluence",
         "km":  4,
         "grade":  "3",
-        "notes":  "Industrial adventure with trees and sluices to contend with... null",
+        "notes":  "Industrial adventure with trees and sluices to contend with...",
         "measures":  [
 
                      ],
@@ -2751,7 +2751,7 @@
         "sectionName":  "Hethpool to Westnewton",
         "km":  2.5,
         "grade":  "4",
-        "notes":  "A small trib of the Glen, the main interest is several falls in Hethpool gorge - the hardest of which is the constricted Hethpool Linn. null",
+        "notes":  "A small trib of the Glen, the main interest is several falls in Hethpool gorge - the hardest of which is the constricted Hethpool Linn.",
         "measures":  [
 
                      ],
@@ -3016,7 +3016,7 @@
         "sectionName":  "Rothbury to Weldon Mill",
         "km":  12,
         "grade":  "2/3",
-        "notes":  "Fairly fast grade two with the odd grade three rapid. null",
+        "notes":  "Fairly fast grade two with the odd grade three rapid.",
         "measures":  [
                          {
                              "scrape":  0.6,
@@ -3114,7 +3114,7 @@
         "sectionName":  "Nathwaite Bridge to Ure Confluence",
         "km":  10,
         "grade":  "2/3",
-        "notes":  "A fairly constant gradient, makes this fast moving in high water, but beware of trees. null",
+        "notes":  "A fairly constant gradient, makes this fast moving in high water, but beware of trees.",
         "measures":  [
 
                      ],
@@ -3624,7 +3624,7 @@
         "sectionName":  "Upper Cynfal Gorge to Cwm Farm",
         "km":  1,
         "grade":  "5/6",
-        "notes":  "This is a series of drops, slots and slides ranging between 10ft-70ft. Take climbing gear for the Rhaeadr Y Cwm portage. You\u0027re in for an adventure! null",
+        "notes":  "This is a series of drops, slots and slides ranging between 10ft-70ft. Take climbing gear for the Rhaeadr Y Cwm portage. You\u0027re in for an adventure!",
         "measures":  [
 
                      ],
@@ -3711,7 +3711,7 @@
         "sectionName":  "Gradbach to Rushton Spencer",
         "km":  10,
         "grade":  "3 (4)",
-        "notes":  "Spate river with nice continuous grade 3/4 gorge at the start. null",
+        "notes":  "Spate river with nice continuous grade 3/4 gorge at the start.",
         "measures":  [
                          {
                              "low":  0.35,
@@ -3902,7 +3902,7 @@
         "sectionName":  "Lea Yeat to Dent",
         "km":  6,
         "grade":  "4/5",
-        "notes":  "The first few kms act as a warm up to Ibbeth Peril Falls - a 3m slide into a large plunge pool. To the right of the fall is an undercut cliff containing Ibbeth Peril Cave - a pothole which you won\u0027t want to be anywhere near! Below this are three more hard falls, all of which have now been paddled, but a portage of the middle one may be advisable. The river then eases off to grade 3, before becoming flat for the last few kms down to Dent. null",
+        "notes":  "The first few kms act as a warm up to Ibbeth Peril Falls - a 3m slide into a large plunge pool. To the right of the fall is an undercut cliff containing Ibbeth Peril Cave - a pothole which you won\u0027t want to be anywhere near! Below this are three more hard falls, all of which have now been paddled, but a portage of the middle one may be advisable. The river then eases off to grade 3, before becoming flat for the last few kms down to Dent.",
         "measures":  [
 
                      ],
@@ -4170,7 +4170,7 @@
         "sectionName":  "Bamford to Froggatt",
         "km":  12,
         "grade":  "2 (3)",
-        "notes":  "null null",
+        "notes":  "",
         "measures":  [
                          {
                              "scrape":  1.25,
@@ -4205,7 +4205,7 @@
         "sectionName":  "Darley Dale to Matlock",
         "km":  6,
         "grade":  "1/2",
-        "notes":  "Mostly gentle paddle, with a few bits of continuous grade 2, including the slalom site near the take-out. null",
+        "notes":  "Mostly gentle paddle, with a few bits of continuous grade 2, including the slalom site near the take-out.",
         "measures":  [
                          {
                              "scrape":  0.3,
@@ -4240,7 +4240,7 @@
         "sectionName":  "Yorkshire Bridge to Bamford",
         "km":  3,
         "grade":  "2 (3)",
-        "notes":  "null null",
+        "notes":  "",
         "measures":  [
                          {
                              "low":  0.7,
@@ -4274,7 +4274,7 @@
         "sectionName":  "Derwent Bridge to Shotley Bridge",
         "km":  14.5,
         "grade":  "2/3",
-        "notes":  "A fairly low grade river, which is generally only paddled in spate due to the reservoir holding back the water. The main interest is from small bouldery rapids, weirs and a couple of small falls at the end. Trees may be problematic. null",
+        "notes":  "A fairly low grade river, which is generally only paddled in spate due to the reservoir holding back the water. The main interest is from small bouldery rapids, weirs and a couple of small falls at the end. Trees may be problematic.",
         "measures":  [
 
                      ],
@@ -4419,7 +4419,7 @@
         "sectionName":  "Doncaster Prison to Barnby Dun",
         "km":  9,
         "grade":  "1",
-        "notes":  "Grade 1/2 with weirs null",
+        "notes":  "Grade 1/2 with weirs",
         "measures":  [
 
                      ],
@@ -5403,7 +5403,7 @@
         "sectionName":  "Appleby in Westmorland to Langwathby",
         "km":  19,
         "grade":  "1",
-        "notes":  "null null",
+        "notes":  "",
         "measures":  [
 
                      ],
@@ -5461,7 +5461,7 @@
         "sectionName":  "Great Musgrave to Appleby in Westmorland",
         "km":  13,
         "grade":  "1",
-        "notes":  "null null",
+        "notes":  "",
         "measures":  [
 
                      ],
@@ -5490,7 +5490,7 @@
         "sectionName":  "Kirkby Stephen to Great Musgrave",
         "km":  7,
         "grade":  "1/2",
-        "notes":  "Easy shingle rapids on a meandering river bed. One small weir near the start. null",
+        "notes":  "Easy shingle rapids on a meandering river bed. One small weir near the start.",
         "measures":  [
 
                      ],
@@ -6887,7 +6887,7 @@
         "sectionName":  "Brabyn\u0027s Park to MCC site",
         "km":  2.5,
         "grade":  "2/3",
-        "notes":  "A collection of weirs coupled with MCC\u0027s slalom site. Possible to extend the trip with more weirs in high water by starting as far up as Whalley Bridge or getting out as far down as Stockport. In spate some weirs will need portaging. null",
+        "notes":  "A collection of weirs coupled with MCC\u0027s slalom site. Possible to extend the trip with more weirs in high water by starting as far up as Whalley Bridge or getting out as far down as Stockport. In spate some weirs will need portaging.",
         "measures":  [
                          {
                              "scrape":  0.45,
@@ -6922,7 +6922,7 @@
         "sectionName":  "New Mills to Brabyn\u0027s Park",
         "km":  8.4,
         "grade":  "2 (3)",
-        "notes":  "null null",
+        "notes":  "",
         "measures":  [
 
                      ],
@@ -7585,7 +7585,7 @@
         "sectionName":  "Hallas Lane to Caravan Site",
         "km":  1,
         "grade":  "2/3 (5)",
-        "notes":  "Small fast spate beck with one large waterfall (Goit Stock). null",
+        "notes":  "Small fast spate beck with one large waterfall (Goit Stock).",
         "measures":  [
 
                      ],
@@ -7614,7 +7614,7 @@
         "sectionName":  "Langleeford to Wooler",
         "km":  10,
         "grade":  "3",
-        "notes":  "This run starts on Harthope Burn and turns into Wooler water after 4km. Starting off small, there\u0027s a small gorge after the confluence, the odd small fall and weirs towards the end. Higher up the valley a walk in will reveal Harthope Linn - a 20ft waterfall which may not yet have seen a descent. null",
+        "notes":  "This run starts on Harthope Burn and turns into Wooler water after 4km. Starting off small, there\u0027s a small gorge after the confluence, the odd small fall and weirs towards the end. Higher up the valley a walk in will reveal Harthope Linn - a 20ft waterfall which may not yet have seen a descent.",
         "measures":  [
 
                      ],
@@ -7858,7 +7858,7 @@
         "sectionName":  "Sands to Magdale",
         "km":  4.8,
         "grade":  "1/2",
-        "notes":  "The Holme is rarely paddled â€“ probably due to the scarcity of a decent amount of water. However, if deep enough, it offers a picturesque paddle with a frequent variety of features. Its course is heavily wooded for the most part and you will be unaware that in some sections you are passing through a small town. The occasional bankside mill and the number of weirs give a clue to the industrial past of the area. At lower levels, some parts can be a little â€˜scrapeyâ€™ but the most notable and enjoyable features are the rapids which occur in several short sections. The best of these is at Smithy Place in Brockholes just after the road bridge which links the A616 and A6024. There are another potentially quite gnarly set at the take out directly below the second vertical weir described above. Sands playing fields are on the outskirts of Holmfirth next to Holmfirth Swimming Baths on the A6024. There is a large free car park right next to the river here. However, this may be busy on winter Sunday mornings due to the adjacent football pitches. The adventurous can put in above the footbridge and tackle the almost immediate 1.7m vertical drop. For the more sedate, (and those of us who have noticed shopping trolleys in the weir before now, ) it is very easy to cross the footbridge, walk a few metres downstream and put in in the adjacent woodland. Look out for the Herons which often feed here.\\nThe take-out is at the confluence with Mag Brook just before Steps Industrial Park to the north of Honley. Take the A6024 from Holmfirth. About half-a-mile after this joins the A616, there is a road to the left which is signposted â€œMagdaleâ€. On-street parking is available here before the bridge. The take-out is reached via the public footpath which runs along the front of the houses on the Western bank. Get out on the left bank at the junction of the two rivers.\\n",
+        "notes":  "The Holme is rarely paddled – probably due to the scarcity of a decent amount of water. However, if deep enough, it offers a picturesque paddle with a frequent variety of features. Its course is heavily wooded for the most part and you will be unaware that in some sections you are passing through a small town. The occasional bankside mill and the number of weirs give a clue to the industrial past of the area. At lower levels, some parts can be a little ‘scrapey’ but the most notable and enjoyable features are the rapids which occur in several short sections. The best of these is at Smithy Place in Brockholes just after the road bridge which links the A616 and A6024. There are another potentially quite gnarly set at the take out directly below the second vertical weir described above. Sands playing fields are on the outskirts of Holmfirth next to Holmfirth Swimming Baths on the A6024. There is a large free car park right next to the river here. However, this may be busy on winter Sunday mornings due to the adjacent football pitches. The adventurous can put in above the footbridge and tackle the almost immediate 1.7m vertical drop. For the more sedate, (and those of us who have noticed shopping trolleys in the weir before now, ) it is very easy to cross the footbridge, walk a few metres downstream and put in in the adjacent woodland. Look out for the Herons which often feed here.\\nThe take-out is at the confluence with Mag Brook just before Steps Industrial Park to the north of Honley. Take the A6024 from Holmfirth. About half-a-mile after this joins the A616, there is a road to the left which is signposted “Magdale”. On-street parking is available here before the bridge. The take-out is reached via the public footpath which runs along the front of the houses on the Western bank. Get out on the left bank at the junction of the two rivers.\\n",
         "measures":  [
                          {
                              "scrape":  0.6,
@@ -8876,7 +8876,7 @@
         "sectionName":  "Pont y Pant to Beaver Pool",
         "km":  6,
         "grade":  "4 (5)",
-        "notes":  "Starts off with Pont-y-Pant falls, a long technical rapid ending in a slide. If you\u0027re feeling like you\u0027d rather have a warm-up before tacking this, it is possible to put in below by carrying 150m down the road on river left.  A few more good grade 4 rapids follow before the \u0027minger\u0027, which marks the start of a fun 200m gorge. The \u0027minger\u0027 forms a chunky hole (portage over the rocks hard left) at anything above medium levels, but when it is high, a chicken line with a nice boof line opens up down the portage line. A small bridge (53Â°04\u002706.0\"N 3Â°50\u002709.8\"W) marks an alternative takeout half-way, or continue down, being sure to get out river right to portage Viaduct falls â€“ a long manky siphon filled rapid that has been run but is not recommended. Takeout just south of Betws-y-Coed on the A470 at the confluence with the Conwy (the same takeout as the Fairy Glen). To get to the putin continue up the A470 away from Betws-y-Coed to Pont-y-Pant bridge (a small bridge just off the main road next to a restaurant). Don\u0027t forget to drop a few quid in the honesty box for use of their land for parking.",
+        "notes":  "Starts off with Pont-y-Pant falls, a long technical rapid ending in a slide. If you\u0027re feeling like you\u0027d rather have a warm-up before tacking this, it is possible to put in below by carrying 150m down the road on river left.  A few more good grade 4 rapids follow before the \u0027minger\u0027, which marks the start of a fun 200m gorge. The \u0027minger\u0027 forms a chunky hole (portage over the rocks hard left) at anything above medium levels, but when it is high, a chicken line with a nice boof line opens up down the portage line. A small bridge (53°04\u002706.0\"N 3°50\u002709.8\"W) marks an alternative takeout half-way, or continue down, being sure to get out river right to portage Viaduct falls – a long manky siphon filled rapid that has been run but is not recommended. Takeout just south of Betws-y-Coed on the A470 at the confluence with the Conwy (the same takeout as the Fairy Glen). To get to the putin continue up the A470 away from Betws-y-Coed to Pont-y-Pant bridge (a small bridge just off the main road next to a restaurant). Don\u0027t forget to drop a few quid in the honesty box for use of their land for parking.",
         "measures":  [
                          {
                              "scrape":  0.55,
@@ -9561,7 +9561,7 @@
         "sectionName":  "Oakshaw Ford to Cliff Bridge",
         "km":  17,
         "grade":  "1/2",
-        "notes":  "A few small rapids early in in the first half, ease off for the second section. It is possible to shorten the trip by starting/stopping at some of the bridges en route. null",
+        "notes":  "A few small rapids early in in the first half, ease off for the second section. It is possible to shorten the trip by starting/stopping at some of the bridges en route.",
         "measures":  [
 
                      ],
@@ -9865,7 +9865,7 @@
         "sectionName":  "Middlehope Bridge to Wear Confluence",
         "km":  3,
         "grade":  "3",
-        "notes":  "The old mine workings is where the fun bit starts and isn\u0027t a bad walk down an obvious track - park by the stile at the top of the hill on the little road up from Westgate.The highlight of the run is a tunnel to boof to tunnel combo in the middle of the old mine workings, and carries on down into the wooded gorge below. This is very pleasant grade 3 with regular small ledge drops to keep up the interest. A bit tree-ey at the moment though, but the interest will continue all the way down to Westgate.  null",
+        "notes":  "The old mine workings is where the fun bit starts and isn\u0027t a bad walk down an obvious track - park by the stile at the top of the hill on the little road up from Westgate.The highlight of the run is a tunnel to boof to tunnel combo in the middle of the old mine workings, and carries on down into the wooded gorge below. This is very pleasant grade 3 with regular small ledge drops to keep up the interest. A bit tree-ey at the moment though, but the interest will continue all the way down to Westgate. ",
         "measures":  [
 
                      ],
@@ -10552,7 +10552,7 @@
         "sectionName":  "Darley to Ripley",
         "km":  10,
         "grade":  "2/3",
-        "notes":  "Mostly shallow and slow, due to the reservoirs restricting the flow, the main interest on the Nidd comes from weirs. null",
+        "notes":  "Mostly shallow and slow, due to the reservoirs restricting the flow, the main interest on the Nidd comes from weirs.",
         "measures":  [
 
                      ],
@@ -10581,7 +10581,7 @@
         "sectionName":  "Wath to Darley",
         "km":  12,
         "grade":  "1/2",
-        "notes":  "Low grade paddle with the odd weir. null",
+        "notes":  "Low grade paddle with the odd weir.",
         "measures":  [
 
                      ],
@@ -10675,7 +10675,7 @@
         "sectionName":  "Bagshaw Bridge to Hope",
         "km":  3,
         "grade":  "2 (3)",
-        "notes":  "null null",
+        "notes":  "",
         "measures":  [
 
                      ],
@@ -11017,7 +11017,7 @@
         "sectionName":  "Linton Weir",
         "km":  0.1,
         "grade":  "3",
-        "notes":  "Popular play spot consisting of a fish ladder and 3m weir. At certain levels a play wave is formed. null",
+        "notes":  "Popular play spot consisting of a fish ladder and 3m weir. At certain levels a play wave is formed.",
         "measures":  [
                          {
                              "low":  0.02,
@@ -11050,7 +11050,7 @@
         "sectionName":  "Ramshaw Fell to South Tyne Confluence",
         "km":  3,
         "grade":  "3/4",
-        "notes":  "A rarely paddleable spate trib of the South Tyne with a couple of 2m+ falls and fast flowing rapids. null",
+        "notes":  "A rarely paddleable spate trib of the South Tyne with a couple of 2m+ falls and fast flowing rapids.",
         "measures":  [
 
                      ],
@@ -11914,7 +11914,7 @@
         "sectionName":  "Footbridge to Eastgate",
         "km":  3,
         "grade":  "3 (4)",
-        "notes":  "Rarely paddled spate ditch Wear trib with a few waterfalls including a 4-5m fall which looks quite photogenic. Get out at Eastgate Bridge or continue onto the Wear. null",
+        "notes":  "Rarely paddled spate ditch Wear trib with a few waterfalls including a 4-5m fall which looks quite photogenic. Get out at Eastgate Bridge or continue onto the Wear.",
         "measures":  [
                          {
                              "scrape":  0.3,
@@ -12084,7 +12084,7 @@
         "sectionName":  "Mowthorpe Farm to Sea",
         "km":  7,
         "grade":  "3",
-        "notes":  "An odd man-made river, mostly flat, but loads of weirs to shoot, some of which can be tricky. null",
+        "notes":  "An odd man-made river, mostly flat, but loads of weirs to shoot, some of which can be tricky.",
         "measures":  [
                          {
                              "low":  0.3,
@@ -12117,7 +12117,7 @@
         "sectionName":  "Low Sweden Bridge to Scandale Bridge",
         "km":  0.6,
         "grade":  "5",
-        "notes":  "Short Beck near Ambleside with two 3m+ falls and a series of tricky rapids. null",
+        "notes":  "Short Beck near Ambleside with two 3m+ falls and a series of tricky rapids.",
         "measures":  [
 
                      ],
@@ -12541,7 +12541,7 @@
         "sectionName":  "Garrigill to Alston",
         "km":  6.5,
         "grade":  "2/3",
-        "notes":  "A high water trip starting at grade 3 and dropping back to grade 2. null",
+        "notes":  "A high water trip starting at grade 3 and dropping back to grade 2.",
         "measures":  [
                          {
                              "scrape":  0.6,
@@ -12705,7 +12705,7 @@
         "sectionName":  "Woodland Fell to Bedburn Beck Source",
         "km":  4.5,
         "grade":  "2/3 (4)",
-        "notes":  "Spate ditch in Hamsterley Forest. Mostly grade 2/3 but with one large fall (Blackling Hole) which can be run just as a park-and-huck in lower levels than needed for the rest of the beck. Use the Forest Drive in Hamsterley after paying the Â£3 toll. Park at Blackling Hole and walk up as high as you can be bothered. Take out at the car park near the Grove or carry on down Bedburn Beck.",
+        "notes":  "Spate ditch in Hamsterley Forest. Mostly grade 2/3 but with one large fall (Blackling Hole) which can be run just as a park-and-huck in lower levels than needed for the rest of the beck. Use the Forest Drive in Hamsterley after paying the £3 toll. Park at Blackling Hole and walk up as high as you can be bothered. Take out at the car park near the Grove or carry on down Bedburn Beck.",
         "measures":  [
                          {
                              "scrape":  0.5,
@@ -13374,7 +13374,7 @@
         "sectionName":  "Smiddy Well Rigg to Tarset Burn Confluence",
         "km":  2,
         "grade":  "2/3",
-        "notes":  "A short Kielder Burn with a walk in and a couple of small falls. null",
+        "notes":  "A short Kielder Burn with a walk in and a couple of small falls.",
         "measures":  [
 
                      ],
@@ -13403,7 +13403,7 @@
         "sectionName":  "Hill Bridge to Tavistock",
         "km":  8,
         "grade":  "3 (4)",
-        "notes":  "null null",
+        "notes":  "",
         "measures":  [
                          {
                              "scrape":  0.45,
@@ -13439,7 +13439,7 @@
         "sectionName":  "Tavistock to Denham Bridge",
         "km":  10,
         "grade":  "2/3",
-        "notes":  "A quieter version of the Dart Loop. Mostly grade two, with one notable grade three after the Walkham confluence. null",
+        "notes":  "A quieter version of the Dart Loop. Mostly grade two, with one notable grade three after the Walkham confluence.",
         "measures":  [
                          {
                              "scrape":  0.3,
@@ -14045,7 +14045,7 @@
         "sectionName":  "Ludlow to Ashford Carbonell",
         "km":  5,
         "grade":  "1/2",
-        "notes":  "Relaxing bimble with a few weirs. null",
+        "notes":  "Relaxing bimble with a few weirs.",
         "measures":  [
                          {
                              "medium":  1.75,
@@ -14277,7 +14277,7 @@
         "sectionName":  "Trent Lock (Thrumpton Weir)",
         "km":  0,
         "grade":  "3/4",
-        "notes":  "A big green (brown) fast wave that you can front surf and carve around on to your hearts content. The shape of the waves favours longer (faster) boats. The best parking spot (i.e. the one that causes least bother to locals) is the public car parks near the Trent Lock Inn. Once on the water, paddle downstream ~300m, avoid turning left onto the canal. Just after the railway bridge is the weir - itâ€™s possible to paddle past the bouys on the left. Getting back you have two choices - put in above the weir and paddle upstream, which can be a challenge in high flows / wind, or paddle downstream a few hundred meters and turn left to come back along the canal cut, portaging the lock.",
+        "notes":  "A big green (brown) fast wave that you can front surf and carve around on to your hearts content. The shape of the waves favours longer (faster) boats. The best parking spot (i.e. the one that causes least bother to locals) is the public car parks near the Trent Lock Inn. Once on the water, paddle downstream ~300m, avoid turning left onto the canal. Just after the railway bridge is the weir - it’s possible to paddle past the bouys on the left. Getting back you have two choices - put in above the weir and paddle upstream, which can be a challenge in high flows / wind, or paddle downstream a few hundred meters and turn left to come back along the canal cut, portaging the lock.",
         "measures":  [
                          {
                              "low":  2.7,
@@ -14457,7 +14457,7 @@
         "sectionName":  "Peebles To Peel",
         "km":  25,
         "grade":  "1",
-        "notes":  "null Putin at Peebles. Takeout at Peel: the minor road bridge just off the A707 near the A72/A707 jct.",
+        "notes":  "Putin at Peebles. Takeout at Peel: the minor road bridge just off the A707 near the A72/A707 jct.",
         "measures":  [
                          {
                              "scrape":  0,
@@ -14613,11 +14613,11 @@
     {
         "id":  "1feea0c2-dd9b-4226-9c57-90f3017e0bc4",
         "riverName":  "Twrch (Banwy)",
-        "name":  "Twrch (Banwy) - DÃ´l-y-gaseg to Foel",
-        "sectionName":  "DÃ´l-y-gaseg to Foel",
+        "name":  "Twrch (Banwy) - Dôl-y-gaseg to Foel",
+        "sectionName":  "Dôl-y-gaseg to Foel",
         "km":  5,
         "grade":  "3",
-        "notes":  "Easy water from the ford leads to a 2nd ford 500m downstream which will need portaging unless the river is high. From here the water is mellow to the road bridge halfway down, watch out for the fence hanging under the bridge. Downstream just after a stone bridge you enter the Twrch gorge, containg 4 distinct grade 3 rapids. After the gorge, the river is easy to the takeout. Takeout at the carpark on river right just downstream of the A458 road bridge at Foel. To reach the putin head upstream on river left along a minor road. Cross to river right at the first bridge (a possible alternative putin) and head upstream for a few km until there is a ford across the river just off the road near DÃ´l-y-gaseg.",
+        "notes":  "Easy water from the ford leads to a 2nd ford 500m downstream which will need portaging unless the river is high. From here the water is mellow to the road bridge halfway down, watch out for the fence hanging under the bridge. Downstream just after a stone bridge you enter the Twrch gorge, containg 4 distinct grade 3 rapids. After the gorge, the river is easy to the takeout. Takeout at the carpark on river right just downstream of the A458 road bridge at Foel. To reach the putin head upstream on river left along a minor road. Cross to river right at the first bridge (a possible alternative putin) and head upstream for a few km until there is a ford across the river just off the road near Dôl-y-gaseg.",
         "measures":  [
 
                      ],
@@ -14919,7 +14919,7 @@
         "sectionName":  "Appersett to Aysgarth Falls",
         "km":  20,
         "grade":  "2",
-        "notes":  "Fairly flat and meandering upper section of the Ure. null",
+        "notes":  "Fairly flat and meandering upper section of the Ure.",
         "measures":  [
 
                      ],
@@ -15533,7 +15533,7 @@
         "sectionName":  "Low Angerton to Mitford",
         "km":  10,
         "grade":  "2",
-        "notes":  "Fast flowing, low grade run in pleasent countryside. null",
+        "notes":  "Fast flowing, low grade run in pleasent countryside.",
         "measures":  [
 
                      ],
@@ -15562,7 +15562,7 @@
         "sectionName":  "Stonehaugh to Wark",
         "km":  8,
         "grade":  "2/3",
-        "notes":  "There\u0027s a 2m fall along this run, but beware of fences.  null",
+        "notes":  "There\u0027s a 2m fall along this run, but beware of fences. ",
         "measures":  [
 
                      ],
@@ -16107,7 +16107,7 @@
         "sectionName":  "Bolton Bridge to Ilkley",
         "km":  9,
         "grade":  "2",
-        "notes":  "Low grade bimble with a couple of weirs. The weir near Addingham may need portaging. null",
+        "notes":  "Low grade bimble with a couple of weirs. The weir near Addingham may need portaging.",
         "measures":  [
                          {
                              "low":  0.5,
@@ -16277,7 +16277,7 @@
         "sectionName":  "Widdale Bridge to Appersett",
         "km":  4,
         "grade":  "2",
-        "notes":  "Small spate trib of the Upper Ure. null",
+        "notes":  "Small spate trib of the Upper Ure.",
         "measures":  [
 
                      ],
@@ -16667,7 +16667,7 @@
         "sectionName":  "Abbeystead to Dolphinholme",
         "km":  4,
         "grade":  "2",
-        "notes":  "From the confluence of the Tarnbrook and Marshaw Wyre\u0027s the river flows through a flat overgrown section of river into Abbeystead reservoir. The dam is yet to see a descent, for good reason, portage on the left and put back in below a small foot bridge. Two small weirs of note break up the easier water on the way down to Dolphinholme. The river continues at the same grade down at least as far as Cleveley Bridge, but this is into fishing territory, so expect hassle! null",
+        "notes":  "From the confluence of the Tarnbrook and Marshaw Wyre\u0027s the river flows through a flat overgrown section of river into Abbeystead reservoir. The dam is yet to see a descent, for good reason, portage on the left and put back in below a small foot bridge. Two small weirs of note break up the easier water on the way down to Dolphinholme. The river continues at the same grade down at least as far as Cleveley Bridge, but this is into fishing territory, so expect hassle!",
         "measures":  [
                          {
                              "low":  0.3,
@@ -16773,7 +16773,7 @@
         "sectionName":  "Mill Bridge to Mark\u0027s Bridge",
         "km":  4,
         "grade":  "3",
-        "notes":  "null If wanting to avoid Blachford Manor, you can miss the upper section and put in at Langham Bridge. There\u0027s not much in the way of parking spaces at either put-in or the take-out.",
+        "notes":  "If wanting to avoid Blachford Manor, you can miss the upper section and put in at Langham Bridge. There\u0027s not much in the way of parking spaces at either put-in or the take-out.",
         "measures":  [
                          {
                              "low":  0.45,

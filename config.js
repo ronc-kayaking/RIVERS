@@ -3,7 +3,6 @@ window.RIVER_APP_CONFIG = {
   defaultZoom: 6,
   defaultTileLayer: "esri-street",
   accessSectionsGlobal: "RAINCHASERS_SECTIONS",
-  accessSectionsUrl: "data/rainchasers-sections.json",
   accessSectionsSourceName: "Rainchasers",
   accessSectionsSourceUrl: "https://github.com/robtuley/rainchasers",
   accessSectionsLicense: "MIT",

@@ -1,0 +1,3 @@
+[submodule "data/rainchasers-source"]
+	path = data/rainchasers-source
+	url = https://github.com/robtuley/rainchasers.git

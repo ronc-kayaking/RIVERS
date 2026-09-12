@@ -4,7 +4,7 @@
   const EA_BASE = "https://environment.data.gov.uk/flood-monitoring";
   const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 
-  const STATION_CACHE_KEY = "england-river-stations-v2";
+  const STATION_CACHE_KEY = "england-river-stations-v3";
   const LATEST_CACHE_KEY = "england-river-latest-v1";
   const GEOMETRY_CACHE_PREFIX = "england-river-geometry-v2:";
   const ACCESS_SECTIONS_CACHE_KEY = "river-access-sections-v4";
@@ -15,6 +15,10 @@
   const GEOMETRY_CACHE_TTL = 24 * 60 * 60 * 1000;
   const ACCESS_SECTIONS_CACHE_TTL = 24 * 60 * 60 * 1000;
   const MAX_RIVERS_VISIBLE = 1000;
+  const API_PAGE_SIZE = 10000;
+  const MAX_API_PAGES = 50;
+  const MAX_NEAREST_GAUGE_DISTANCE_KM = 25;
+  const MAX_SAME_RIVER_GAUGE_DISTANCE_KM = 80;
   const EARTH_RADIUS_KM = 6371;
   const FLOW_LEVELS = ["scrape", "low", "medium", "high", "huge"];
   const FLOW_LEVEL_META = {
@@ -37,6 +41,9 @@
     stationsById: new Map(),
     latestByStationRef: new Map(),
     latestFetchedAt: 0,
+    stationDataState: { kind: "missing", fetchedAt: 0, error: "" },
+    latestDataState: { kind: "missing", fetchedAt: 0, error: "" },
+    nrwFetchedAt: 0,
     selectedRiverKey: "",
     riverType: "whitewater",
     rainchasersRiverKeys: null,
@@ -54,7 +61,9 @@
 
   const els = {};
 
-  document.addEventListener("DOMContentLoaded", init);
+  if (!window.RIVER_APP_TEST_MODE) {
+    document.addEventListener("DOMContentLoaded", init);
+  }
 
   function init() {
     bindElements();
@@ -79,14 +88,23 @@
     els.selectedRiver = document.getElementById("selectedRiver");
     els.selectedSource = document.getElementById("selectedSource");
     els.statusMessage = document.getElementById("statusMessage");
+    els.dataFreshness = document.getElementById("dataFreshness");
   }
 
   function bindEvents() {
     els.riverSearch.addEventListener("input", renderRiverList);
     els.riverTypeTabs.forEach(function (tab) {
       tab.addEventListener("click", function () {
-        state.riverType = tab.dataset.riverType || "whitewater";
-        renderRiverList({ fitOverview: !state.selectedRiverKey });
+        activateRiverType(tab.dataset.riverType || "whitewater");
+      });
+      tab.addEventListener("keydown", function (event) {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const current = els.riverTypeTabs.indexOf(tab);
+        let next = event.key === "Home" ? 0 : event.key === "End" ? els.riverTypeTabs.length - 1 :
+          (current + (event.key === "ArrowRight" ? 1 : -1) + els.riverTypeTabs.length) % els.riverTypeTabs.length;
+        els.riverTypeTabs[next].focus();
+        activateRiverType(els.riverTypeTabs[next].dataset.riverType || "whitewater");
       });
     });
 
@@ -108,7 +126,11 @@
         }).catch(showError);
       }
     });
+  }
 
+  function activateRiverType(type) {
+    state.riverType = type;
+    renderRiverList({ fitOverview: !state.selectedRiverKey });
   }
 
   async function bootApp() {
@@ -210,7 +232,7 @@
 
     els.mapStyle.replaceChildren(fragment);
 
-    const preferred = localStorage.getItem(TILE_LAYER_STORAGE_KEY) || defaultTileLayer || state.tileLayers[0].id;
+    const preferred = safeStorageGet(TILE_LAYER_STORAGE_KEY) || defaultTileLayer || state.tileLayers[0].id;
     els.mapStyle.value = state.tileLayers.some(function (tileLayer) {
       return tileLayer.id === preferred;
     }) ? preferred : state.tileLayers[0].id;
@@ -244,7 +266,7 @@
       }
     });
 
-    localStorage.setItem(TILE_LAYER_STORAGE_KEY, selected.id);
+    safeStorageSet(TILE_LAYER_STORAGE_KEY, selected.id);
     els.mapStyle.value = selected.id;
     state.map.invalidateSize({ animate: false });
 
@@ -274,21 +296,40 @@
     const force = Boolean(options && options.force);
     if (!force && state.rivers.length) return;
 
-    const cached = force ? null : readCache(STATION_CACHE_KEY, STATION_CACHE_TTL);
+    const cached = force ? null : readCache(STATION_CACHE_KEY, STATION_CACHE_TTL, { includeMeta: true });
     if (cached) {
-      hydrateRiverIndex(cached);
+      state.stationDataState = { kind: "cached", fetchedAt: cached.createdAt, error: "" };
+      hydrateRiverIndex(cached.value);
       return;
     }
 
     setBusy("Loading Environment Agency stations...");
-    const url = `${EA_BASE}/id/stations?parameter=level&status=Active&_view=full&_limit=10000`;
-    const data = await fetchJson(url);
-    const items = asArray(data.items);
-    const stations = items.filter(isRiverLevelStation).map(normalizeStation);
-    const payload = buildRiverPayload(stations);
-
-    writeCache(STATION_CACHE_KEY, payload);
-    hydrateRiverIndex(payload);
+    const url = `${EA_BASE}/id/stations?parameter=level&status=Active&_view=full`;
+    try {
+      const items = await fetchAllItems(url, { pageSize: API_PAGE_SIZE });
+      const stations = items.filter(isRiverLevelStation).map(normalizeStation);
+      const payload = buildRiverPayload(stations);
+      writeCache(STATION_CACHE_KEY, payload);
+      state.stationDataState = { kind: "live", fetchedAt: payload.createdAt, error: "" };
+      hydrateRiverIndex(payload);
+    } catch (error) {
+      const stale = readCache(STATION_CACHE_KEY, STATION_CACHE_TTL, { allowExpired: true, includeMeta: true });
+      if (stale) {
+        state.stationDataState = {
+          kind: "stale",
+          fetchedAt: stale.createdAt,
+          error: error && error.message ? error.message : "Station refresh failed."
+        };
+        hydrateRiverIndex(stale.value);
+      } else {
+        state.stationDataState = {
+          kind: "failed",
+          fetchedAt: 0,
+          error: error && error.message ? error.message : "Station refresh failed."
+        };
+        hydrateRiverIndex(buildRiverPayload([]));
+      }
+    }
   }
 
   function buildRiverPayload(stations) {
@@ -351,6 +392,7 @@
     }));
 
     const nrwStations = normalizeNrwStations(window.NRW_STATIONS);
+    state.nrwFetchedAt = parseDateTime(window.NRW_STATIONS_FETCHED_AT);
     nrwStations.forEach(function (station) {
       state.stationsById.set(station.id, station);
     });
@@ -370,6 +412,7 @@
 
     renderRiverTypeTabs();
     els.riverListMeta.textContent = `${state.rivers.length} rivers from ${payload.stations.length + nrwStations.length} active level stations`;
+    renderDataFreshness();
   }
 
   function mergeRainchasersSections(rivers, stations) {
@@ -475,6 +518,7 @@
     if (!anchors.length) return null;
 
     let nearest = null;
+    const sectionRiverKey = accessMatchKey(section && section.name);
     asArray(stations).forEach(function (station) {
       if (!isFiniteNumber(station && station.lat) || !isFiniteNumber(station && station.lng)) return;
 
@@ -482,8 +526,18 @@
         return Math.min(best, distanceBetweenPointsKm(point, station));
       }, Infinity);
 
-      if (!nearest || distanceKm < nearest.distanceKm) {
-        nearest = { station, distanceKm };
+      const stationRiverKey = accessMatchKey(station.riverName);
+      const sameRiver = Boolean(sectionRiverKey && stationRiverKey && (
+        stationRiverKey === sectionRiverKey ||
+        stationRiverKey.startsWith(`${sectionRiverKey}-`) ||
+        sectionRiverKey.startsWith(`${stationRiverKey}-`)
+      ));
+      const maxDistanceKm = sameRiver ? MAX_SAME_RIVER_GAUGE_DISTANCE_KM : MAX_NEAREST_GAUGE_DISTANCE_KM;
+      if (distanceKm > maxDistanceKm) return;
+
+      const score = distanceKm + (sameRiver ? 0 : MAX_NEAREST_GAUGE_DISTANCE_KM);
+      if (!nearest || score < nearest.score) {
+        nearest = { station, distanceKm, sameRiver, score };
       }
     });
 
@@ -552,6 +606,16 @@
       updateSummary(river);
       renderGaugeList(river);
       drawGaugeMarkers(river);
+    }).catch(function (error) {
+      if (controller.signal.aborted) return;
+      state.latestDataState = {
+        kind: "failed",
+        fetchedAt: state.latestFetchedAt,
+        error: error && error.message ? error.message : "Live reading refresh failed."
+      };
+      updateSummary(river);
+      renderGaugeList(river);
+      drawGaugeMarkers(river);
     });
 
     const geometryTask = loadRiverGeometry(river, {
@@ -586,7 +650,8 @@
     if (accessCount) {
       fitToSelectedContent(river, selectedLines);
     }
-    els.statusMessage.textContent = `${readingCount} current readings found across ${river.stationCount} gauges.${accessCount ? ` ${accessCount} access points shown.` : ""}`;
+    els.statusMessage.textContent = selectedRiverStatus(river, readingCount, accessCount);
+    renderDataFreshness();
     setReady();
   }
 
@@ -622,21 +687,31 @@
     const freshInMemory = state.latestFetchedAt && Date.now() - state.latestFetchedAt < LATEST_CACHE_TTL;
     if (!force && freshInMemory) return;
 
-    const cached = force ? null : readCache(LATEST_CACHE_KEY, LATEST_CACHE_TTL);
+    const cached = force ? null : readCache(LATEST_CACHE_KEY, LATEST_CACHE_TTL, { includeMeta: true });
     if (cached) {
-      hydrateLatestReadings(cached.readings, cached.createdAt);
+      hydrateLatestReadings(cached.value.readings, cached.createdAt);
+      state.latestDataState = { kind: "cached", fetchedAt: cached.createdAt, error: "" };
       return;
     }
 
-    const url = `${EA_BASE}/data/readings?latest&parameter=level&_view=full&_limit=10000`;
-    const data = await fetchJson(url, { signal });
-    const readings = asArray(data.items).map(normalizeLatestReading).filter(Boolean);
-
-    hydrateLatestReadings(readings, Date.now());
-    writeCache(LATEST_CACHE_KEY, {
-      createdAt: Date.now(),
-      readings
-    });
+    const url = `${EA_BASE}/data/readings?latest&parameter=level&_view=full`;
+    try {
+      const items = await fetchAllItems(url, { signal, pageSize: API_PAGE_SIZE });
+      const readings = items.map(normalizeLatestReading).filter(Boolean);
+      const createdAt = Date.now();
+      hydrateLatestReadings(readings, createdAt);
+      state.latestDataState = { kind: "live", fetchedAt: createdAt, error: "" };
+      writeCache(LATEST_CACHE_KEY, { createdAt, readings });
+    } catch (error) {
+      const stale = readCache(LATEST_CACHE_KEY, LATEST_CACHE_TTL, { allowExpired: true, includeMeta: true });
+      if (!stale) throw error;
+      hydrateLatestReadings(stale.value.readings, stale.createdAt);
+      state.latestDataState = {
+        kind: "stale",
+        fetchedAt: stale.createdAt,
+        error: error && error.message ? error.message : "Live reading refresh failed."
+      };
+    }
   }
 
   function hydrateLatestReadings(readings, createdAt) {
@@ -963,7 +1038,11 @@
       const active = type === state.riverType;
       tab.classList.toggle("active", active);
       tab.setAttribute("aria-selected", active ? "true" : "false");
+      tab.tabIndex = active ? 0 : -1;
       tab.textContent = `${riverTypeLabel(type)} ${counts[type] || 0}`;
+      if (active && els.riverList) {
+        els.riverList.setAttribute("aria-labelledby", tab.id);
+      }
     });
   }
 
@@ -1008,6 +1087,7 @@
     const badge = document.createElement("span");
     badge.className = `river-flow-badge flow-${meta.className}`;
     badge.textContent = meta.label;
+    badge.setAttribute("aria-label", `Flow status: ${meta.label}`);
     return badge;
   }
 
@@ -1074,7 +1154,7 @@
     if (!stations.length) {
       const empty = document.createElement("p");
       empty.className = "empty-gauges";
-      empty.textContent = "No Environment Agency gauges for this river.";
+      empty.textContent = "No gauge data is available for this river.";
       fragment.append(empty);
       els.gaugeList.replaceChildren(fragment);
       return;
@@ -1109,6 +1189,7 @@
     const statusChip = document.createElement("span");
     statusChip.className = `chip ${readingStatus.kind}`;
     statusChip.textContent = readingStatus.label;
+    statusChip.setAttribute("aria-label", `Gauge status: ${readingStatus.label}`);
 
     titleBlock.append(title, town);
     header.append(titleBlock, statusChip);
@@ -1176,9 +1257,28 @@
     }).then(function () {
       if (!state.selectedRiverKey) {
         renderRiverList({ preserveScroll: true });
+        renderDataFreshness();
+        if (state.latestDataState.kind === "live") {
+          els.statusMessage.textContent = "Live gauge readings loaded.";
+        } else if (state.latestDataState.kind === "cached") {
+          els.statusMessage.textContent = "Gauge readings loaded from cache.";
+        } else if (state.latestDataState.kind === "stale") {
+          els.statusMessage.textContent = "Stale cached readings shown because the live refresh failed.";
+        } else {
+          els.statusMessage.textContent = "Live gauge readings are unavailable.";
+        }
       }
     }).catch(function (error) {
       console.warn(error);
+      state.latestDataState = {
+        kind: "failed",
+        fetchedAt: state.latestFetchedAt,
+        error: error && error.message ? error.message : "Live reading refresh failed."
+      };
+      renderDataFreshness();
+      els.statusMessage.textContent = state.stationDataState.kind === "failed"
+        ? "Live Environment Agency data is unavailable; Rainchasers and NRW snapshot data remain available."
+        : "Live gauge readings are unavailable.";
     });
   }
 
@@ -1429,7 +1529,7 @@
   }
 
   function selectRiverFromHash() {
-    const hashName = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+    const hashName = parseLocationHash(window.location.hash);
     if (!hashName) return;
     const key = makeKey(hashName);
     if (state.riverByKey.has(key)) {
@@ -1588,10 +1688,10 @@
       dataUrl: stationDataUrlFromRloiId(item),
       uri: item["@id"] || "",
       stationReference: item.stationReference || "",
-      label: item.label || item.stationReference || "Unnamed gauge",
-      riverName: cleanRiverName(item.riverName),
-      town: item.town || "",
-      catchmentName: item.catchmentName || "",
+      label: localisedText(item.label) || item.stationReference || "Unnamed gauge",
+      riverName: cleanRiverName(localisedText(item.riverName)),
+      town: localisedText(item.town),
+      catchmentName: localisedText(item.catchmentName),
       lat: Number(item.lat),
       lng: Number(item.long),
       measures,
@@ -1741,9 +1841,9 @@
       return `
 [out:json][timeout:25];
 (
-  way["waterway"~"^(river|stream|canal)$"]["name"~"^(${pattern})$","i"]${bbox};
-  relation["waterway"~"^(river|stream|canal)$"]["name"~"^(${pattern})$","i"]${bbox};
-  relation["type"="waterway"]["name"~"^(${pattern})$","i"]${bbox};
+  way["waterway"~"^(river|stream|canal)$"]["name"~"^(${pattern})$",i]${bbox};
+  relation["waterway"~"^(river|stream|canal)$"]["name"~"^(${pattern})$",i]${bbox};
+  relation["type"="waterway"]["name"~"^(${pattern})$",i]${bbox};
 );
 out geom;`;
     }
@@ -1752,9 +1852,9 @@ out geom;`;
 [out:json][timeout:25];
 area["ISO3166-2"="GB-ENG"][admin_level=4]->.searchArea;
 (
-  way["waterway"~"^(river|stream|canal)$"]["name"~"^(${pattern})$","i"](area.searchArea);
-  relation["waterway"~"^(river|stream|canal)$"]["name"~"^(${pattern})$","i"](area.searchArea);
-  relation["type"="waterway"]["name"~"^(${pattern})$","i"](area.searchArea);
+  way["waterway"~"^(river|stream|canal)$"]["name"~"^(${pattern})$",i](area.searchArea);
+  relation["waterway"~"^(river|stream|canal)$"]["name"~"^(${pattern})$",i](area.searchArea);
+  relation["type"="waterway"]["name"~"^(${pattern})$",i](area.searchArea);
 );
 out geom;`;
   }
@@ -1821,6 +1921,27 @@ out geom;`;
     }
 
     return response.json();
+  }
+
+  async function fetchAllItems(url, options) {
+    const pageSize = Number(options && options.pageSize) || API_PAGE_SIZE;
+    const signal = options && options.signal;
+    const fetchPage = options && options.fetchPage;
+    const items = [];
+
+    for (let page = 0; page < MAX_API_PAGES; page += 1) {
+      const pageUrl = new URL(url, window.location.href);
+      pageUrl.searchParams.set("_limit", pageSize);
+      pageUrl.searchParams.set("_offset", page * pageSize);
+      const data = fetchPage
+        ? await fetchPage(pageUrl.toString(), { signal })
+        : await fetchJson(pageUrl.toString(), { signal });
+      const pageItems = asArray(data && data.items);
+      items.push.apply(items, pageItems);
+      if (pageItems.length < pageSize) return items;
+    }
+
+    throw new Error(`API pagination exceeded ${MAX_API_PAGES} pages.`);
   }
 
   function createMarkerStyle(kind) {
@@ -1905,15 +2026,18 @@ out geom;`;
 
   function createAccessPopupHtml(point, section) {
     const sourceName = section.sourceName || "Rainchasers";
-    const sourceUrl = section.sourceUrl || "https://github.com/robtuley/rainchasers";
     const license = section.license || "MIT";
     const links = [];
 
-    if (section.guidebookLink) {
-      links.push(`<a href="${escapeHtml(section.guidebookLink)}" target="_blank" rel="noopener">Guidebook</a>`);
+    const guidebookLink = safeExternalUrl(section.guidebookLink);
+    const accessIssue = safeExternalUrl(section.accessIssue);
+    const sourceUrl = safeExternalUrl(section.sourceUrl) || "https://github.com/robtuley/rainchasers";
+
+    if (guidebookLink) {
+      links.push(`<a href="${escapeHtml(guidebookLink)}" target="_blank" rel="noopener noreferrer">Guidebook</a>`);
     }
-    if (section.accessIssue) {
-      links.push(`<a href="${escapeHtml(section.accessIssue)}" target="_blank" rel="noopener">Access issue</a>`);
+    if (accessIssue) {
+      links.push(`<a href="${escapeHtml(accessIssue)}" target="_blank" rel="noopener noreferrer">Access issue</a>`);
     }
 
     return `
@@ -1923,7 +2047,7 @@ out geom;`;
         ${section.grade ? `<span>Grade ${escapeHtml(section.grade)}</span><br>` : ""}
         ${isFiniteNumber(section.km) ? `<span>${escapeHtml(formatDistance(section.km))}</span><br>` : ""}
         ${links.length ? `<span>${links.join(" | ")}</span><br>` : ""}
-        <span>Source: <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(sourceName)}</a> (${escapeHtml(license)})</span>
+        <span>Source: <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(sourceName)}</a> (${escapeHtml(license)})</span>
       </div>
     `;
   }
@@ -2015,18 +2139,114 @@ out geom;`;
   function setBusy(message) {
     els.connectionDot.classList.remove("ready");
     els.connectionDot.classList.add("busy");
+    els.connectionDot.setAttribute("aria-label", "Data connection status: loading");
     if (message) els.statusMessage.textContent = message;
   }
 
   function setReady() {
     els.connectionDot.classList.remove("busy");
-    els.connectionDot.classList.add("ready");
+    const hasFailure = state.stationDataState.kind === "failed" || state.latestDataState.kind === "failed";
+    els.connectionDot.classList.toggle("ready", !hasFailure);
+    els.connectionDot.setAttribute("aria-label", hasFailure
+      ? "Application ready; some data is unavailable"
+      : "Data connection status: ready");
   }
 
   function showError(error) {
     console.error(error);
     els.connectionDot.classList.remove("ready", "busy");
+    els.connectionDot.setAttribute("aria-label", "Data connection status: error");
     els.statusMessage.textContent = error && error.message ? error.message : "Something went wrong.";
+    renderDataFreshness();
+  }
+
+  function selectedRiverStatus(river, readingCount, accessCount) {
+    const parts = [];
+    if (!river.stationCount) {
+      parts.push("No gauge data is available.");
+    } else if (!hasStationSource(river, "ea") && hasStationSource(river, "nrw")) {
+      parts.push(`${readingCount} NRW snapshot readings shown across ${river.stationCount} gauges.`);
+    } else if (state.latestDataState.kind === "live") {
+      parts.push(`${readingCount} live readings retrieved across ${river.stationCount} gauges.`);
+    } else if (state.latestDataState.kind === "cached") {
+      parts.push(`${readingCount} cached readings shown across ${river.stationCount} gauges.`);
+    } else if (state.latestDataState.kind === "stale") {
+      parts.push(`${readingCount} stale cached readings shown; live refresh failed.`);
+    } else if (state.latestDataState.kind === "failed") {
+      parts.push(readingCount
+        ? `${readingCount} previously loaded readings shown; live refresh failed.`
+        : "Live reading refresh failed and no readings are available.");
+    } else {
+      parts.push(`${readingCount} readings found across ${river.stationCount} gauges.`);
+    }
+    if (accessCount) parts.push(`${accessCount} access points shown.`);
+    return parts.join(" ");
+  }
+
+  function renderDataFreshness() {
+    if (!els.dataFreshness) return;
+    const parts = [];
+    if (state.stationDataState.kind !== "missing") {
+      parts.push(`EA stations: ${dataStateLabel(state.stationDataState)}.`);
+    }
+    if (state.latestDataState.kind !== "missing") {
+      parts.push(`EA readings: ${dataStateLabel(state.latestDataState)}.`);
+    }
+    if (state.nrwFetchedAt) {
+      parts.push(`NRW snapshot: ${snapshotAgeLabel(state.nrwFetchedAt)}.`);
+    } else if (window.NRW_STATIONS) {
+      parts.push("NRW snapshot date unavailable.");
+    }
+    els.dataFreshness.textContent = parts.join(" ");
+  }
+
+  function dataStateLabel(dataState) {
+    const age = dataState.fetchedAt ? relativeAge(dataState.fetchedAt) : "";
+    if (dataState.kind === "live") return `live${age ? `, retrieved ${age}` : ""}`;
+    if (dataState.kind === "cached") return `cached${age ? `, saved ${age}` : ""}`;
+    if (dataState.kind === "stale") return `stale cache${age ? ` from ${age}` : ""}; refresh failed`;
+    if (dataState.kind === "failed") return `refresh failed${age ? `; previous data from ${age}` : ""}`;
+    return "missing";
+  }
+
+  function snapshotAgeLabel(timestamp) {
+    const ageDays = Math.max(0, Math.floor((Date.now() - timestamp) / (24 * 60 * 60 * 1000)));
+    const freshness = ageDays <= 2 ? "current" : ageDays <= 7 ? "recent" : "stale";
+    return `${freshness}, ${ageDays} day${ageDays === 1 ? "" : "s"} old`;
+  }
+
+  function relativeAge(timestamp) {
+    const elapsed = Math.max(0, Date.now() - timestamp);
+    if (elapsed < 60 * 1000) return "just now";
+    if (elapsed < 60 * 60 * 1000) return `${Math.floor(elapsed / (60 * 1000))} minutes ago`;
+    if (elapsed < 24 * 60 * 60 * 1000) return `${Math.floor(elapsed / (60 * 60 * 1000))} hours ago`;
+    return `${Math.floor(elapsed / (24 * 60 * 60 * 1000))} days ago`;
+  }
+
+  function parseDateTime(value) {
+    const timestamp = new Date(value || "").getTime();
+    return Number.isFinite(timestamp) ? timestamp : 0;
+  }
+
+  function parseLocationHash(hash) {
+    const encoded = String(hash || "").replace(/^#/, "");
+    if (!encoded) return "";
+    try {
+      return decodeURIComponent(encoded);
+    } catch (error) {
+      console.warn("Ignoring malformed URL hash.", error);
+      return "";
+    }
+  }
+
+  function safeExternalUrl(value) {
+    if (!value) return "";
+    try {
+      const url = new URL(String(value), window.location.href);
+      return url.protocol === "http:" || url.protocol === "https:" ? url.href : "";
+    } catch (error) {
+      return "";
+    }
   }
 
   function asArray(value) {
@@ -2056,6 +2276,7 @@ out geom;`;
 
   function localisedText(value) {
     if (!value) return "";
+    if (Array.isArray(value)) return localisedText(value[0]);
     if (typeof value === "string") return value;
     return value.english || value.en || value.welsh || "";
   }
@@ -2474,16 +2695,50 @@ out geom;`;
     return `${text.slice(0, maxLength - 1).trim()}...`;
   }
 
-  function readCache(key, maxAge) {
+  function safeStorageGet(key) {
     try {
-      const raw = localStorage.getItem(key);
+      return window.localStorage.getItem(key);
+    } catch (error) {
+      console.warn("Browser storage is unavailable.", error);
+      return null;
+    }
+  }
+
+  function safeStorageSet(key, value) {
+    try {
+      window.localStorage.setItem(key, value);
+      return true;
+    } catch (error) {
+      console.warn("Browser storage write failed.", error);
+      return false;
+    }
+  }
+
+  function safeStorageRemove(key) {
+    try {
+      window.localStorage.removeItem(key);
+      return true;
+    } catch (error) {
+      console.warn("Browser storage removal failed.", error);
+      return false;
+    }
+  }
+
+  function readCache(key, maxAge, options) {
+    try {
+      const raw = safeStorageGet(key);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
-      if (!parsed || !parsed.createdAt || Date.now() - parsed.createdAt > maxAge) {
-        localStorage.removeItem(key);
+      if (!parsed || !parsed.createdAt) {
+        safeStorageRemove(key);
         return null;
       }
-      return parsed.value || parsed;
+      const expired = Date.now() - parsed.createdAt > maxAge;
+      if (expired && !(options && options.allowExpired)) return null;
+      const value = parsed.value || parsed;
+      return options && options.includeMeta
+        ? { value, createdAt: parsed.createdAt, expired }
+        : value;
     } catch (error) {
       console.warn(error);
       return null;
@@ -2493,9 +2748,29 @@ out geom;`;
   function writeCache(key, value) {
     try {
       const payload = value && value.createdAt ? value : { createdAt: Date.now(), value };
-      localStorage.setItem(key, JSON.stringify(payload));
+      safeStorageSet(key, JSON.stringify(payload));
     } catch (error) {
       console.warn(error);
     }
   }
+
+  window.RIVER_APP_TEST_API = Object.freeze({
+    accessMatchKey,
+    buildOverpassQuery,
+    distanceBetweenPointsKm,
+    fetchAllItems,
+    findNearestStationForSection,
+    normalizeLatestReading,
+    normalizeNrwStation,
+    normalizeStation,
+    osGridToLatLng,
+    parseLocationHash,
+    readCache,
+    safeExternalUrl,
+    safeStorageGet,
+    safeStorageRemove,
+    safeStorageSet,
+    snapshotAgeLabel,
+    writeCache
+  });
 })();

@@ -3,6 +3,7 @@ param(
 )
 
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RootWithSeparator = $Root.TrimEnd([System.IO.Path]::DirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
 $MimeTypes = @{
   ".html" = "text/html; charset=utf-8"
   ".css" = "text/css; charset=utf-8"
@@ -50,7 +51,11 @@ try {
   while ($true) {
     $Client = $Listener.AcceptTcpClient()
     try {
+      $Client.ReceiveTimeout = 3000
+      $Client.SendTimeout = 3000
       $Stream = $Client.GetStream()
+      $Stream.ReadTimeout = 3000
+      $Stream.WriteTimeout = 3000
       $Reader = [System.IO.StreamReader]::new($Stream, [System.Text.Encoding]::ASCII, $false, 1024, $true)
       $RequestLine = $Reader.ReadLine()
 
@@ -77,7 +82,7 @@ try {
       $RelativePath = $RequestPath.TrimStart("/").Replace("/", [System.IO.Path]::DirectorySeparatorChar)
       $FullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($Root, $RelativePath))
 
-      if (-not $FullPath.StartsWith($Root, [System.StringComparison]::OrdinalIgnoreCase)) {
+      if ($FullPath -ne $Root -and -not $FullPath.StartsWith($RootWithSeparator, [System.StringComparison]::OrdinalIgnoreCase)) {
         Send-Text -Stream $Stream -Status "403 Forbidden" -Text "Forbidden"
         continue
       }
@@ -99,6 +104,7 @@ try {
       try {
         Send-Text -Stream $Stream -Status "500 Internal Server Error" -Text $_.Exception.Message
       } catch {
+        Write-Warning "Unable to send an error response: $($_.Exception.Message)"
       }
     } finally {
       $Client.Close()

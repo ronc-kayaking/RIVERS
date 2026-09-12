@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>RIVERS automated tests</title>
+  </head>
+  <body>
+    <pre id="results">Running...</pre>
+    <script>window.RIVER_APP_TEST_MODE = true;</script>
+    <script src="../data/rainchasers-sections.js"></script>
+    <script src="../data/nrw-stations.js"></script>
+    <script src="../app.js"></script>
+    <script>
+      (async function () {
+        "use strict";
+
+        const api = window.RIVER_APP_TEST_API;
+        const failures = [];
+        let passed = 0;
+
+        function test(name, assertion) {
+          try {
+            if (!assertion()) throw new Error("assertion returned false");
+            passed += 1;
+          } catch (error) {
+            failures.push(`${name}: ${error.message}`);
+          }
+        }
+
+        function near(actual, expected, tolerance) {
+          return Math.abs(actual - expected) <= tolerance;
+        }
+
+        test("Rainchasers generated data is populated", function () {
+          return Array.isArray(window.RAINCHASERS_SECTIONS) &&
+            window.RAINCHASERS_SECTIONS.length > 500 &&
+            window.RAINCHASERS_SECTIONS.every(function (section) {
+              return section.id && section.riverName && section.sectionName &&
+                Array.isArray(section.points) && section.points.length > 0;
+            });
+
+            test("Generated text cannot terminate its script element", function () {
+              return window.RAINCHASERS_SECTIONS.every(function (section) {
+                return !JSON.stringify(section).toLowerCase().includes("</script");
+              }) && window.NRW_STATIONS.every(function (station) {
+                return !JSON.stringify(station).toLowerCase().includes("</script");
+              });
+            });
+        });
+
+        test("NRW generated data and timestamp are populated", function () {
+          return Array.isArray(window.NRW_STATIONS) && window.NRW_STATIONS.length > 400 &&
+            Number.isFinite(new Date(window.NRW_STATIONS_FETCHED_AT).getTime());
+        });
+
+        test("EA station normalisation", function () {
+          const station = api.normalizeStation({
+            "@id": "https://example.test/id/stations/A1",
+            stationReference: "A1",
+            label: "Test gauge",
+            riverName: "River Test",
+            lat: 52,
+            long: -2,
+            measures: [{ "@id": "m1", parameter: "level", qualifier: "Stage", unitName: "m" }]
+          });
+          return station.id === "A1" && station.source === "ea" &&
+            station.riverName === "River Test" && station.measures.length === 1;
+        });
+
+        test("EA array-valued labels are normalised", function () {
+          const station = api.normalizeStation({
+            stationReference: "A2",
+            label: ["Primary label", "Secondary label"],
+            riverName: ["River Test"],
+            town: ["Test town"],
+            catchmentName: ["Test catchment"],
+            lat: 52,
+            long: -2,
+            measures: []
+          });
+          return station.label === "Primary label" && station.riverName === "River Test" &&
+            station.town === "Test town" && station.catchmentName === "Test catchment";
+        });
+
+        test("NRW station normalisation", function () {
+          const raw = window.NRW_STATIONS.find(function (station) {
+            return Array.isArray(station.parameters) && station.parameters.some(function (parameter) {
+              return Number(parameter.typeId) === 1;
+            });
+          });
+          const station = api.normalizeNrwStation(raw);
+          return station && station.source === "nrw" && Number.isFinite(station.lat) &&
+            Number.isFinite(station.lng) && station.latestReading;
+        });
+
+        test("OS grid conversion", function () {
+          const point = api.osGridToLatLng(318000, 176000);
+          return point && near(point.lat, 51.47, 0.08) && near(point.lng, -3.18, 0.08);
+        });
+
+        test("Nearest gauge accepts a nearby station", function () {
+          const result = api.findNearestStationForSection({
+            name: "River Test",
+            accessPoints: [{ lat: 52, lng: -2 }]
+          }, [{ id: "near", riverName: "Test", lat: 52.05, lng: -2.05 }]);
+          return result && result.station.id === "near";
+        });
+
+        test("Nearest gauge rejects an unrelated distant station", function () {
+          return api.findNearestStationForSection({
+            name: "River Test",
+            accessPoints: [{ lat: 52, lng: -2 }]
+          }, [{ id: "far", riverName: "Other", lat: 53, lng: -3 }]) === null;
+        });
+
+        test("Malformed URL hash is ignored", function () {
+          return api.parseLocationHash("#%E0%A4%A") === "";
+        });
+
+        test("Valid URL hash is decoded", function () {
+          return api.parseLocationHash("#River%20Wye") === "River Wye";
+        });
+
+        test("External URL validation permits HTTPS", function () {
+          return api.safeExternalUrl("https://example.test/path").startsWith("https://example.test/");
+        });
+
+        test("External URL validation rejects executable schemes", function () {
+          return api.safeExternalUrl("javascript:alert(1)") === "" &&
+            api.safeExternalUrl("data:text/html,unsafe") === "";
+        });
+
+        test("Overpass query uses valid case-insensitive syntax", function () {
+          const query = api.buildOverpassQuery({
+            name: "River Test",
+            bounds: { north: 52.1, south: 52, east: -1.9, west: -2 }
+          });
+          return query.includes('["name"~"^(River Test|Test)$",i]') && !query.includes(',"i"]');
+        });
+
+        api.safeStorageRemove("rivers-test-cache");
+        api.writeCache("rivers-test-cache", { value: "fresh" });
+        test("Fresh cache can be read", function () {
+          return api.readCache("rivers-test-cache", 60000).value === "fresh";
+        });
+
+        api.safeStorageSet("rivers-test-cache", JSON.stringify({
+          createdAt: Date.now() - 120000,
+          value: { value: "stale" }
+        }));
+        test("Expired cache is not returned as fresh", function () {
+          return api.readCache("rivers-test-cache", 60000) === null;
+        });
+        test("Expired cache is available for failure fallback", function () {
+          const result = api.readCache("rivers-test-cache", 60000, {
+            allowExpired: true,
+            includeMeta: true
+          });
+          return result && result.expired && result.value.value === "stale";
+        });
+        api.safeStorageRemove("rivers-test-cache");
+
+        const originalGetItem = Storage.prototype.getItem;
+        Storage.prototype.getItem = function () { throw new Error("storage blocked"); };
+        test("Disabled storage does not throw", function () {
+          return api.safeStorageGet("blocked") === null;
+        });
+        Storage.prototype.getItem = originalGetItem;
+
+        const originalSetItem = Storage.prototype.setItem;
+        Storage.prototype.setItem = function () { throw new Error("quota exceeded"); };
+        test("Storage quota errors do not throw", function () {
+          return api.safeStorageSet("blocked", "value") === false;
+        });
+        Storage.prototype.setItem = originalSetItem;
+
+        let requestedPages = [];
+        const paged = await api.fetchAllItems("https://example.test/api", {
+          pageSize: 2,
+          fetchPage: async function (url) {
+            requestedPages.push(url);
+            const offset = Number(new URL(url).searchParams.get("_offset"));
+            return { items: offset === 0 ? [1, 2] : [3] };
+          }
+        });
+        test("API pagination retrieves every page", function () {
+          return paged.join(",") === "1,2,3" && requestedPages.length === 2 &&
+            new URL(requestedPages[1]).searchParams.get("_offset") === "2";
+        });
+
+        let rejected = false;
+        try {
+          await api.fetchAllItems("https://example.test/api", {
+            fetchPage: async function () { throw new Error("network failed"); }
+          });
+        } catch (error) {
+          rejected = error.message === "network failed";
+        }
+        test("API failures remain explicit", function () {
+          return rejected;
+        });
+
+        test("NRW freshness identifies stale snapshots", function () {
+          return api.snapshotAgeLabel(Date.now() - 10 * 86400000).startsWith("stale");
+        });
+
+        const result = document.getElementById("results");
+        result.dataset.failures = String(failures.length);
+        result.textContent = failures.length
+          ? `${passed} passed, ${failures.length} failed\n${failures.join("\n")}`
+          : `${passed} passed, 0 failed`;
+      })().catch(function (error) {
+        const result = document.getElementById("results");
+        result.dataset.failures = "1";
+        result.textContent = `Test runner failed: ${error.stack || error.message}`;
+      });
+    </script>
+  </body>
+</html>

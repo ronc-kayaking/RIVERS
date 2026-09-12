@@ -14,7 +14,7 @@
           <div>
             <p class="eyebrow">UK river levels</p>
           </div>
-          <span class="connection-dot" id="connectionDot" aria-hidden="true"></span>
+          <span class="connection-dot" id="connectionDot" role="status" aria-label="Data connection status"></span>
         </header>
 
         <div class="controls">
@@ -25,17 +25,18 @@
         </div>
 
         <div class="river-tabs" role="tablist" aria-label="River type">
-          <button class="river-tab active" type="button" data-river-type="whitewater" role="tab" aria-selected="true">White water</button>
-          <button class="river-tab" type="button" data-river-type="flatwater" role="tab" aria-selected="false">Flat water</button>
+          <button class="river-tab active" id="whitewaterTab" type="button" data-river-type="whitewater" role="tab" aria-controls="riverList" aria-selected="true">White water</button>
+          <button class="river-tab" id="flatwaterTab" type="button" data-river-type="flatwater" role="tab" aria-controls="riverList" aria-selected="false" tabindex="-1">Flat water</button>
         </div>
 
         <p class="list-meta" id="riverListMeta">Loading rivers...</p>
         <section class="selected-section-details" id="selectedSectionDetails" hidden></section>
-        <nav class="river-list" id="riverList" aria-label="River list"></nav>
+        <nav class="river-list" id="riverList" role="tabpanel" aria-labelledby="whitewaterTab"></nav>
       </aside>
 
       <main class="map-area">
-        <div id="map" class="map" aria-label="Map showing selected river and gauges"></div>
+        <p class="visually-hidden" id="mapInstructions">Interactive map. Use the plus and minus controls to zoom. Select a river from the list to display gauges, access points and river geometry.</p>
+        <div id="map" class="map" role="application" tabindex="0" aria-label="Map showing selected river and gauges" aria-describedby="mapInstructions"></div>
 
         <section class="river-panel" aria-live="polite">
           <div class="panel-header">
@@ -54,7 +55,16 @@
           </div>
 
           <div class="summary-row" id="riverSummary"></div>
-          <p class="status-message" id="statusMessage"></p>
+          <p class="status-message" id="statusMessage" role="status" aria-live="polite"></p>
+          <p class="data-freshness" id="dataFreshness"></p>
+          <div class="flow-legend" aria-label="Flow status legend">
+            <span><i class="legend-swatch flow-scrape"></i>Scrape</span>
+            <span><i class="legend-swatch flow-low"></i>Low</span>
+            <span><i class="legend-swatch flow-medium"></i>Medium</span>
+            <span><i class="legend-swatch flow-high"></i>High</span>
+            <span><i class="legend-swatch flow-huge"></i>Huge</span>
+            <span><i class="legend-swatch flow-empty"></i>No data</span>
+          </div>
           <div class="gauge-list" id="gaugeList"></div>
 
           <p class="attribution">

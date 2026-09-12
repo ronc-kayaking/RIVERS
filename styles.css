@@ -18,6 +18,18 @@
   box-sizing: border-box;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 html,
 body {
   width: 100%;
@@ -46,6 +58,8 @@ select {
 }
 
 .sidebar {
+  position: relative;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -687,6 +701,43 @@ select {
   color: var(--muted);
   font-size: 13px;
 }
+
+.data-freshness {
+  margin: 0;
+  padding: 6px 18px 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.flow-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  padding: 9px 18px 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.flow-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border: 1px solid rgba(23, 35, 33, 0.25);
+  border-radius: 50%;
+}
+
+.legend-swatch.flow-scrape { background: #f3a3a3; }
+.legend-swatch.flow-low { background: #f4e68b; }
+.legend-swatch.flow-medium { background: #bee8b8; }
+.legend-swatch.flow-high { background: #68ad71; }
+.legend-swatch.flow-huge { background: #8a55c7; }
+.legend-swatch.flow-empty { background: #f6c98c; }
 
 .gauge-list {
   display: flex;
