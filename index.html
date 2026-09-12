@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UK River Levels</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="config.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <header class="brand">
+          <div>
+            <p class="eyebrow">UK river levels</p>
+          </div>
+          <span class="connection-dot" id="connectionDot" aria-hidden="true"></span>
+        </header>
+
+        <div class="controls">
+          <label class="field-label" for="riverSearch">River</label>
+          <input id="riverSearch" class="search-input" type="search" placeholder="Search rivers" autocomplete="off">
+          <label class="field-label field-label-spaced" for="mapStyle">Map</label>
+          <select id="mapStyle" class="select-input"></select>
+        </div>
+
+        <div class="river-tabs" role="tablist" aria-label="River type">
+          <button class="river-tab active" type="button" data-river-type="whitewater" role="tab" aria-selected="true">White water</button>
+          <button class="river-tab" type="button" data-river-type="flatwater" role="tab" aria-selected="false">Flat water</button>
+        </div>
+
+        <p class="list-meta" id="riverListMeta">Loading rivers...</p>
+        <section class="selected-section-details" id="selectedSectionDetails" hidden></section>
+        <nav class="river-list" id="riverList" aria-label="River list"></nav>
+      </aside>
+
+      <main class="map-area">
+        <div id="map" class="map" aria-label="Map showing selected river and gauges"></div>
+
+        <section class="river-panel" aria-live="polite">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow" id="selectedSource">UK river levels</p>
+              <h2 id="selectedRiver">Select a river</h2>
+            </div>
+            <div class="panel-actions">
+              <button class="icon-button" id="overviewButton" type="button" aria-label="Show all sections" title="Show all sections" hidden>
+                <span aria-hidden="true">&#8592;</span>
+              </button>
+              <button class="icon-button" id="refreshButton" type="button" aria-label="Refresh levels" title="Refresh levels">
+                <span aria-hidden="true">&#8635;</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="summary-row" id="riverSummary"></div>
+          <p class="status-message" id="statusMessage"></p>
+          <div class="gauge-list" id="gaugeList"></div>
+
+          <p class="attribution">
+            Uses Environment Agency flood and river level data from the real-time data API (Beta).
+            Welsh gauges use a local Natural Resources Wales station snapshot.
+            River line overlay uses OpenStreetMap contributors via Overpass API.
+            Put-in and get-out points use a local Rainchasers data copy.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script src="data/rainchasers-sections.js"></script>
+    <script src="data/nrw-stations.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
